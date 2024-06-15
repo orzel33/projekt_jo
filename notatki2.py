@@ -1,5 +1,4 @@
 import requests
-from bs4 import BeautifulSoup
 import psycopg2
 
 db_params = psycopg2.connect(
@@ -22,22 +21,23 @@ def get_coordinates(phar_location):
             print("Nie udało się znaleźć współrzędnych dla podanej lokalizacji.")
             return None
 
+
 def create_phar(db_params) -> None:
     phar_name: str = input("Wprowadź nazwę apteki: ")
     phar_location: str = input("Wprowadź ulicę i kod pocztowy położenia apteki: ")
-    new_phar: dict = {'Nazwa': phar_name, 'location': phar_location}
+    new_phar: dict = {'phar_name': phar_name, 'phar_location': phar_location}
     longitude, latitude = get_coordinates(phar_location)
     cursor = db_params.cursor()
-    sql = f"INSERT INTO public.pharmacies(phar_name, phar_location, phar_coords) VALUES('{phar_name}', '{phar_location}', 'SRID=4326;POINT({longitude} {latitude})');"
+    sql = f"INSERT INTO public.pharmacies(phar_name, phar_location, phar_cords) VALUES('{phar_name}', '{phar_location}', 'SRID=4326;POINT({longitude} {latitude})');"
     cursor.execute(sql)
     db_params.commit()
     cursor.close()
-create_phar(db_params)
-
 
 def read_phar(db_params) -> None:
     cursor = db_params.cursor()
     sql = f"SELECT * FROM public.pharmacies"
     cursor.execute(sql)
-    users = cursor.fetchall()
+    pharmacies = cursor.fetchall()
     cursor.close()
+    for phar in pharmacies:
+        print(phar)
