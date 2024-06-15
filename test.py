@@ -1,4 +1,4 @@
-from notatki2 import create_phar, read_phar,db_params
+from utils.crud_phar import create_phar, read_phar,db_params
 if __name__ == '__main__':
     print('Witaj użytkowniku! ')
     while True:
